@@ -6,4 +6,10 @@
     </style>
 
     <style name="Theme._7MinutesWorkoutApp" parent="Base.Theme._7MinutesWorkoutApp" />
+    
+    <style name="ToolbarTheme" parent="ThemeOverlay.MaterialComponents.ActionBar">
+        <item name="colorControlNormal">@color/toolbar_color_control_normal</item>
+
+    </style>
+
 </resources>
