@@ -24,12 +24,28 @@ class ExerciseActivity : AppCompatActivity() {
 
         setSupportActionBar(binding.exerciseToolbar)
 
+        observeLiveData()
+
         displayUpButtonInToolbar()
         setToolbarNavigationOnClickListener()
 
         cancelTimer(restTimer)
         setRestProgressBarProgress(0)
         setRestTimer()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        cancelTimer(restTimer)
+        cancelTimer(exerciseTimer)
+    }
+
+    private fun observeLiveData() {
+        viewModel.currentExercise.observe(this) { newExercise ->
+            binding.exerciseImage.setImageResource(newExercise.image)
+            binding.exerciseNameText.text = newExercise.name
+
+        }
     }
 
     private fun setToolbarNavigationOnClickListener() {
@@ -49,7 +65,6 @@ class ExerciseActivity : AppCompatActivity() {
     }
 
     private fun setRestTimer() {
-        setTitleTextView(resources.getString(R.string.get_ready_for))
         restTimer = object : CountDownTimer(viewModel.getRestTime(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 viewModel.increaseRestProgress()
@@ -59,7 +74,8 @@ class ExerciseActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                displayExerciseProgressBar()
+                viewModel.updateExercise()
+                displayExerciseViews()
                 cancelTimer(exerciseTimer)
                 cancelTimer(restTimer)
                 setExerciseTimer()
@@ -69,12 +85,11 @@ class ExerciseActivity : AppCompatActivity() {
         }.start()
     }
 
-    private fun setExerciseProgressBarProgress(newExerciseProgress: Int){
+    private fun setExerciseProgressBarProgress(newExerciseProgress: Int) {
         binding.exerciseProgressBar.progress = newExerciseProgress
     }
 
-   private fun setExerciseTimer() {
-       setTitleTextView("Exercise Name")
+    private fun setExerciseTimer() {
         exerciseTimer = object : CountDownTimer(viewModel.getExerciseTime(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 viewModel.increaseExerciseProgress()
@@ -84,30 +99,64 @@ class ExerciseActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                Toast.makeText(
-                    this@ExerciseActivity,
-                    "Exercise done, rest now",
-                    Toast.LENGTH_SHORT
-                ).show()
+                if (viewModel.hasExerciseListNext()) {
+                    displayRestViews()
+                    cancelTimer(exerciseTimer)
+                    cancelTimer(restTimer)
+                    setRestTimer()
+                } else {
+                    Toast.makeText(this@ExerciseActivity, "Workout completed", Toast.LENGTH_SHORT)
+                        .show()
+                }
             }
 
         }.start()
+
     }
+
 
     private fun setTimerTextView(timeLeft: String) {
         binding.timerText.text = timeLeft
     }
-    private fun setTitleTextView(newTitle: String){
-        binding.TitleText.text = newTitle
+
+    private fun displayRestViews() {
+        displayRestProgressBar()
+        displayTitleTextView()
+        hideExerciseImage()
     }
 
-    private fun displayRestProgressBar(){
+    private fun displayRestProgressBar() {
         binding.restProgressBar.visibility = View.VISIBLE
         binding.exerciseProgressBar.visibility = View.GONE
     }
-    private fun displayExerciseProgressBar(){
+
+    private fun displayTitleTextView() {
+        binding.titleText.visibility = View.VISIBLE
+        binding.exerciseNameText.visibility = View.GONE
+    }
+
+    private fun displayExerciseViews() {
+        displayExerciseProgressBar()
+        displayExerciseNameTextView()
+        displayExerciseImage()
+    }
+
+    private fun displayExerciseProgressBar() {
         binding.restProgressBar.visibility = View.GONE
         binding.exerciseProgressBar.visibility = View.VISIBLE
+    }
+
+    private fun displayExerciseNameTextView() {
+        binding.titleText.visibility = View.GONE
+        binding.exerciseNameText.visibility = View.VISIBLE
+    }
+
+    private fun displayExerciseImage() {
+        binding.exerciseImage.visibility = View.VISIBLE
+    }
+
+    private fun hideExerciseImage() {
+        binding.exerciseImage.visibility = View.GONE
     }
 
     private fun cancelTimer(timer: CountDownTimer?) {
@@ -118,9 +167,5 @@ class ExerciseActivity : AppCompatActivity() {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        cancelTimer(restTimer)
-        cancelTimer(exerciseTimer)
-    }
+
 }

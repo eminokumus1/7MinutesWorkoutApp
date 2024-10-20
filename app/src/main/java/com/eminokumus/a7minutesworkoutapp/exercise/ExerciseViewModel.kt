@@ -16,7 +16,8 @@ class ExerciseViewModel : ViewModel(){
 
     private val exerciseList = Constants.getExerciseList()
     private val _currentExercise = MutableLiveData<Exercise>()
-    private val currentExercise: LiveData<Exercise> get() =  _currentExercise
+    val currentExercise: LiveData<Exercise> get() =  _currentExercise
+
     private var currentExercisePosition = -1
 
 
@@ -48,8 +49,14 @@ class ExerciseViewModel : ViewModel(){
         exerciseProgress = 0
     }
 
+    fun hasExerciseListNext(): Boolean{
+        return currentExercisePosition < exerciseList.size-1
+    }
+
     fun updateExercise(){
-        currentExercisePosition++
-        _currentExercise.value = exerciseList[currentExercisePosition]
+        if (currentExercisePosition < exerciseList.size){
+            currentExercisePosition++
+            _currentExercise.value = exerciseList[currentExercisePosition]
+        }
     }
 }

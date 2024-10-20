@@ -15,8 +15,21 @@
         app:layout_constraintTop_toTopOf="parent"
         app:titleTextColor="@color/colorPrimary" />
 
+    <ImageView
+        android:id="@+id/exerciseImage"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:contentDescription="@string/exercise_image"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/exerciseNameText"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exerciseToolbar"
+        android:src="@drawable/ic_plank" />
+
     <TextView
-        android:id="@+id/TitleText"
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/get_ready_for"
@@ -27,16 +40,30 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <TextView
+        android:id="@+id/exerciseNameText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:textColor="@color/colorAccent"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/progressBarFrameLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:text="Exercise name" />
+
     <FrameLayout
         android:id="@+id/progressBarFrameLayout"
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="10dp"
+        android:layout_marginBottom="20dp"
         android:background="@drawable/item_circular_accent"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/exerciseToolbar">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <ProgressBar
             android:id="@+id/restProgressBar"
@@ -49,7 +76,7 @@
             android:max="10"
             android:progress="100"
             android:progressDrawable="@drawable/circular_progress_bar"
-            android:rotation="-90"/>
+            android:rotation="-90" />
 
         <ProgressBar
             android:id="@+id/exerciseProgressBar"
@@ -82,7 +109,6 @@
                 android:textSize="25sp"
                 android:textStyle="bold"
                 tools:text="10" />
-
 
 
         </LinearLayout>
