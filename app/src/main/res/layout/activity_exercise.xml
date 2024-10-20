@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ExerciseActivity">
+    tools:context=".exercise.ExerciseActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/exerciseToolbar"
@@ -41,21 +41,21 @@
         <ProgressBar
             android:id="@+id/restProgressBar"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="97dp"
-            android:layout_height="96dp"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             android:background="@drawable/circular_progress_bar_grey"
             android:indeterminate="false"
             android:max="10"
             android:progress="100"
             android:progressDrawable="@drawable/circular_progress_bar"
-            android:rotation="-90" />
+            android:rotation="-90"/>
 
         <ProgressBar
             android:id="@+id/exerciseProgressBar"
             style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_gravity="center"
             android:background="@drawable/circular_progress_bar_grey"
             android:indeterminate="false"

@@ -1,27 +1,26 @@
-package com.eminokumus.a7minutesworkoutapp
+package com.eminokumus.a7minutesworkoutapp.exercise
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
 import android.widget.Toast
+import com.eminokumus.a7minutesworkoutapp.R
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityExerciseBinding
 
 class ExerciseActivity : AppCompatActivity() {
     private lateinit var binding: ActivityExerciseBinding
+    private lateinit var viewModel: ExerciseViewModel
 
     private var restTimer: CountDownTimer? = null
-    private val restTimeInMillis: Long = 10 * 1000
-    private var restProgress = 0
-
     private var exerciseTimer: CountDownTimer? = null
-    private val exerciseTimeInMillis: Long = 30 * 1000
-    private var exerciseProgress = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExerciseBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        viewModel = ExerciseViewModel()
 
         setSupportActionBar(binding.exerciseToolbar)
 
@@ -51,17 +50,18 @@ class ExerciseActivity : AppCompatActivity() {
 
     private fun setRestTimer() {
         setTitleTextView(resources.getString(R.string.get_ready_for))
-        restTimer = object : CountDownTimer(restTimeInMillis, 1000) {
+        restTimer = object : CountDownTimer(viewModel.getRestTime(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                restProgress++
-                val restTimeInSeconds = restTimeInMillis.div(1000).toInt()
-                setRestProgressBarProgress(restTimeInSeconds - restProgress)
-                setTimerTextView((restTimeInSeconds - restProgress).toString())
+                viewModel.increaseRestProgress()
+                val restTimeInSeconds = viewModel.getRestTime().div(1000).toInt()
+                setRestProgressBarProgress(restTimeInSeconds - viewModel.getRestProgress())
+                setTimerTextView((restTimeInSeconds - viewModel.getRestProgress()).toString())
             }
 
             override fun onFinish() {
                 displayExerciseProgressBar()
                 cancelTimer(exerciseTimer)
+                cancelTimer(restTimer)
                 setExerciseTimer()
 
             }
@@ -75,12 +75,12 @@ class ExerciseActivity : AppCompatActivity() {
 
    private fun setExerciseTimer() {
        setTitleTextView("Exercise Name")
-        exerciseTimer = object : CountDownTimer(exerciseTimeInMillis, 1000) {
+        exerciseTimer = object : CountDownTimer(viewModel.getExerciseTime(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
-                exerciseProgress++
-                val exerciseTimeInSeconds = exerciseTimeInMillis.div(1000).toInt()
-                setExerciseProgressBarProgress(exerciseTimeInSeconds - exerciseProgress)
-                setTimerTextView((exerciseTimeInSeconds - exerciseProgress).toString())
+                viewModel.increaseExerciseProgress()
+                val exerciseTimeInSeconds = viewModel.getExerciseTime().div(1000).toInt()
+                setExerciseProgressBarProgress(exerciseTimeInSeconds - viewModel.getExerciseProgress())
+                setTimerTextView((exerciseTimeInSeconds - viewModel.getExerciseProgress()).toString())
             }
 
             override fun onFinish() {
@@ -113,8 +113,8 @@ class ExerciseActivity : AppCompatActivity() {
     private fun cancelTimer(timer: CountDownTimer?) {
         if (timer != null) {
             timer.cancel()
-            restProgress = 0
-            exerciseProgress = 0
+            viewModel.resetRestProgress()
+            viewModel.resetExerciseProgress()
         }
     }
 

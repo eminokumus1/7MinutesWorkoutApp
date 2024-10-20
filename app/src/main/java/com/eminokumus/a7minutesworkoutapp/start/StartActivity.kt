@@ -1,9 +1,9 @@
-package com.eminokumus.a7minutesworkoutapp
+package com.eminokumus.a7minutesworkoutapp.start
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import com.eminokumus.a7minutesworkoutapp.exercise.ExerciseActivity
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityMainBinding
 
 class StartActivity : AppCompatActivity() {
