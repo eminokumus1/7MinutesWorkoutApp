@@ -3,28 +3,35 @@ package com.eminokumus.a7minutesworkoutapp.exercise
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.view.View
+import android.widget.TextView
 import android.widget.Toast
-import com.eminokumus.a7minutesworkoutapp.R
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityExerciseBinding
+import java.util.Locale
 
-class ExerciseActivity : AppCompatActivity() {
+class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var binding: ActivityExerciseBinding
     private lateinit var viewModel: ExerciseViewModel
 
     private var restTimer: CountDownTimer? = null
     private var exerciseTimer: CountDownTimer? = null
 
+    private var textToSpeech: TextToSpeech? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExerciseBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        initializeTextToSpeech()
         viewModel = ExerciseViewModel()
 
         setSupportActionBar(binding.exerciseToolbar)
 
         observeLiveData()
+
 
         displayUpButtonInToolbar()
         setToolbarNavigationOnClickListener()
@@ -34,16 +41,33 @@ class ExerciseActivity : AppCompatActivity() {
         setRestTimer()
     }
 
+
+
     override fun onDestroy() {
         super.onDestroy()
         cancelTimer(restTimer)
         cancelTimer(exerciseTimer)
+        destroyTextToSpeech()
+    }
+
+    private fun destroyTextToSpeech() {
+        if (textToSpeech != null){
+            textToSpeech!!.stop()
+            textToSpeech!!.shutdown()
+        }
+    }
+
+    private fun initializeTextToSpeech() {
+        textToSpeech = TextToSpeech(this, this)
     }
 
     private fun observeLiveData() {
         viewModel.currentExercise.observe(this) { newExercise ->
             binding.exerciseImage.setImageResource(newExercise.image)
             binding.exerciseNameText.text = newExercise.name
+        }
+        viewModel.nextExerciseName.observe(this){upcomingExerciseName ->
+            binding.upComingExerciseNameText.text = upcomingExerciseName
 
         }
     }
@@ -70,12 +94,13 @@ class ExerciseActivity : AppCompatActivity() {
                 viewModel.increaseRestProgress()
                 val restTimeInSeconds = viewModel.getRestTime().div(1000).toInt()
                 setRestProgressBarProgress(restTimeInSeconds - viewModel.getRestProgress())
-                setTimerTextView((restTimeInSeconds - viewModel.getRestProgress()).toString())
+                val timeLeft = (restTimeInSeconds - viewModel.getRestProgress()).toString()
+                setTimerTextView(binding.restTimerText, timeLeft)
             }
 
             override fun onFinish() {
                 viewModel.updateExercise()
-                displayExerciseViews()
+                setExerciseViews()
                 cancelTimer(exerciseTimer)
                 cancelTimer(restTimer)
                 setExerciseTimer()
@@ -95,12 +120,13 @@ class ExerciseActivity : AppCompatActivity() {
                 viewModel.increaseExerciseProgress()
                 val exerciseTimeInSeconds = viewModel.getExerciseTime().div(1000).toInt()
                 setExerciseProgressBarProgress(exerciseTimeInSeconds - viewModel.getExerciseProgress())
-                setTimerTextView((exerciseTimeInSeconds - viewModel.getExerciseProgress()).toString())
+                val timeLeft = (exerciseTimeInSeconds - viewModel.getExerciseProgress()).toString()
+                setTimerTextView(binding.exerciseTimerText, timeLeft)
             }
 
             override fun onFinish() {
                 if (viewModel.hasExerciseListNext()) {
-                    displayRestViews()
+                    setRestViews()
                     cancelTimer(exerciseTimer)
                     cancelTimer(restTimer)
                     setRestTimer()
@@ -115,19 +141,20 @@ class ExerciseActivity : AppCompatActivity() {
     }
 
 
-    private fun setTimerTextView(timeLeft: String) {
-        binding.timerText.text = timeLeft
+    private fun setTimerTextView(timerTextView: TextView, timeLeft: String) {
+        timerTextView.text = timeLeft
     }
 
-    private fun displayRestViews() {
-        displayRestProgressBar()
+    private fun setRestViews() {
+        displayRestFrameLayout()
         displayTitleTextView()
         hideExerciseImage()
+        displayUpcomingExercise()
     }
 
-    private fun displayRestProgressBar() {
-        binding.restProgressBar.visibility = View.VISIBLE
-        binding.exerciseProgressBar.visibility = View.GONE
+    private fun displayRestFrameLayout() {
+        binding.restFrameLayout.visibility = View.VISIBLE
+        binding.exerciseFrameLayout.visibility = View.GONE
     }
 
     private fun displayTitleTextView() {
@@ -135,15 +162,27 @@ class ExerciseActivity : AppCompatActivity() {
         binding.exerciseNameText.visibility = View.GONE
     }
 
-    private fun displayExerciseViews() {
-        displayExerciseProgressBar()
-        displayExerciseNameTextView()
-        displayExerciseImage()
+    private fun displayUpcomingExercise() {
+        binding.upComingTitleText.visibility = View.VISIBLE
+        binding.upComingExerciseNameText.visibility = View.VISIBLE
     }
 
-    private fun displayExerciseProgressBar() {
-        binding.restProgressBar.visibility = View.GONE
-        binding.exerciseProgressBar.visibility = View.VISIBLE
+    private fun hideUpcomingExercise() {
+        binding.upComingTitleText.visibility = View.GONE
+        binding.upComingExerciseNameText.visibility = View.GONE
+    }
+
+    private fun setExerciseViews() {
+        displayExerciseFrameLayout()
+        displayExerciseNameTextView()
+        displayExerciseImage()
+        hideUpcomingExercise()
+        speakOut(binding.exerciseNameText.text.toString())
+    }
+
+    private fun displayExerciseFrameLayout() {
+        binding.restFrameLayout.visibility = View.GONE
+        binding.exerciseFrameLayout.visibility = View.VISIBLE
     }
 
     private fun displayExerciseNameTextView() {
@@ -166,6 +205,24 @@ class ExerciseActivity : AppCompatActivity() {
             viewModel.resetExerciseProgress()
         }
     }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS){
+            val result = textToSpeech?.setLanguage(Locale.US)
+            Toast.makeText(this, "Speaking", Toast.LENGTH_SHORT).show()
+
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+                Log.e("TextToSpeechError", "The Language specified is not supported!")
+            }
+        }else{
+            Log.e("TextToSpeechError", "Initialization Failed!")
+        }
+    }
+
+    private fun speakOut(text: String){
+        textToSpeech?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
+    }
+
 
 
 }
