@@ -1,5 +1,7 @@
 package com.eminokumus.a7minutesworkoutapp.exercise
 
+import android.media.MediaPlayer
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -8,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import com.eminokumus.a7minutesworkoutapp.R
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityExerciseBinding
 import java.util.Locale
 
@@ -19,6 +22,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private var exerciseTimer: CountDownTimer? = null
 
     private var textToSpeech: TextToSpeech? = null
+    private var player: MediaPlayer? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,16 +46,16 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
 
-
     override fun onDestroy() {
         super.onDestroy()
         cancelTimer(restTimer)
         cancelTimer(exerciseTimer)
+        cancelPlayer()
         destroyTextToSpeech()
     }
 
     private fun destroyTextToSpeech() {
-        if (textToSpeech != null){
+        if (textToSpeech != null) {
             textToSpeech!!.stop()
             textToSpeech!!.shutdown()
         }
@@ -66,7 +70,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             binding.exerciseImage.setImageResource(newExercise.image)
             binding.exerciseNameText.text = newExercise.name
         }
-        viewModel.nextExerciseName.observe(this){upcomingExerciseName ->
+        viewModel.nextExerciseName.observe(this) { upcomingExerciseName ->
             binding.upComingExerciseNameText.text = upcomingExerciseName
 
         }
@@ -89,6 +93,8 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun setRestTimer() {
+        playSound(R.raw.press_start)
+
         restTimer = object : CountDownTimer(viewModel.getRestTime(), 1000) {
             override fun onTick(millisUntilFinished: Long) {
                 viewModel.increaseRestProgress()
@@ -207,22 +213,38 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS){
+        if (status == TextToSpeech.SUCCESS) {
             val result = textToSpeech?.setLanguage(Locale.US)
-            Toast.makeText(this, "Speaking", Toast.LENGTH_SHORT).show()
-
-            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED){
+            if (result == TextToSpeech.LANG_MISSING_DATA || result == TextToSpeech.LANG_NOT_SUPPORTED) {
                 Log.e("TextToSpeechError", "The Language specified is not supported!")
             }
-        }else{
+        } else {
             Log.e("TextToSpeechError", "Initialization Failed!")
+            val sound = R.raw.press_start
         }
     }
 
-    private fun speakOut(text: String){
+    private fun speakOut(text: String) {
         textToSpeech?.speak(text, TextToSpeech.QUEUE_FLUSH, null, "")
     }
 
+    private fun playSound(soundRaw: Int) {
+        try {
+            val soundURI =
+                Uri.parse("android.resource://com.eminokumus.a7minutesworkoutapp/$soundRaw")
+            player = MediaPlayer.create(applicationContext, soundURI)
+            player?.isLooping = false
+            player?.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun cancelPlayer(){
+        if (player != null){
+            player!!.stop()
+        }
+    }
 
 
 }
