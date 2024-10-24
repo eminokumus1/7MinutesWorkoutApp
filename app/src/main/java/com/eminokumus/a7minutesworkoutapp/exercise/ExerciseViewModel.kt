@@ -28,6 +28,9 @@ class ExerciseViewModel : ViewModel() {
         _nextExerciseName.value = exerciseList[0].name
     }
 
+    fun getExerciseList(): ArrayList<Exercise> {
+        return exerciseList
+    }
 
     fun getRestTime(): Long {
         return restTimeInMillis
@@ -74,7 +77,7 @@ class ExerciseViewModel : ViewModel() {
     }
 
     fun updateNextExerciseName() {
-        if (hasExerciseListNext()){
+        if (hasExerciseListNext()) {
             _nextExerciseName.value = exerciseList[currentExercisePosition + 1].name
         }
     }

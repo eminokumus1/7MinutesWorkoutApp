@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
+import androidx.core.view.get
 import com.eminokumus.a7minutesworkoutapp.R
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityExerciseBinding
 import java.util.Locale
@@ -17,12 +18,14 @@ import java.util.Locale
 class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     private lateinit var binding: ActivityExerciseBinding
     private lateinit var viewModel: ExerciseViewModel
+    private lateinit var adapter: ExerciseStatusAdapter
 
     private var restTimer: CountDownTimer? = null
     private var exerciseTimer: CountDownTimer? = null
 
     private var textToSpeech: TextToSpeech? = null
     private var player: MediaPlayer? = null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,15 +39,19 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
         observeLiveData()
 
-
         displayUpButtonInToolbar()
         setToolbarNavigationOnClickListener()
 
         cancelTimer(restTimer)
         setRestProgressBarProgress(0)
         setRestTimer()
+        setupExerciseStatusRecyclerAdapter()
     }
 
+    private fun setupExerciseStatusRecyclerAdapter() {
+        adapter = ExerciseStatusAdapter(viewModel.getExerciseList())
+        binding.exerciseStatusRecycler.adapter = adapter
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -160,7 +167,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     private fun displayRestFrameLayout() {
         binding.restFrameLayout.visibility = View.VISIBLE
-        binding.exerciseFrameLayout.visibility = View.GONE
+        binding.exerciseFrameLayout.visibility = View.INVISIBLE
     }
 
     private fun displayTitleTextView() {
@@ -187,7 +194,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
     private fun displayExerciseFrameLayout() {
-        binding.restFrameLayout.visibility = View.GONE
+        binding.restFrameLayout.visibility = View.INVISIBLE
         binding.exerciseFrameLayout.visibility = View.VISIBLE
     }
 
@@ -220,7 +227,6 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
         } else {
             Log.e("TextToSpeechError", "Initialization Failed!")
-            val sound = R.raw.press_start
         }
     }
 

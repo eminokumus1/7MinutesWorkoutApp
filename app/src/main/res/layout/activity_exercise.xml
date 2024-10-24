@@ -22,7 +22,7 @@
         android:contentDescription="@string/exercise_image"
         android:scaleType="fitXY"
         android:src="@drawable/ic_plank"
-        android:visibility="gone"
+        android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/exerciseNameText"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -129,8 +129,8 @@
         android:textColor="@color/colorAccent"
         android:textSize="22sp"
         android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintBottom_toTopOf="@id/exerciseFrameLayout"
+        android:visibility="invisible"
+        app:layout_constraintTop_toBottomOf="@id/exerciseImage"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
@@ -139,11 +139,12 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_marginTop="10dp"
-        android:visibility="gone"
+        android:visibility="invisible"
         android:layout_marginBottom="20dp"
         android:background="@drawable/item_circular_accent"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/exerciseNameText"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/exerciseStatusRecycler"
         app:layout_constraintStart_toStartOf="parent">
 
 
@@ -158,8 +159,7 @@
             android:max="30"
             android:progress="300"
             android:progressDrawable="@drawable/circular_progress_bar"
-            android:rotation="-90"
-            android:visibility="gone" />
+            android:rotation="-90" />
 
         <LinearLayout
             android:layout_width="60dp"
@@ -179,9 +179,17 @@
                 android:textStyle="bold"
                 tools:text="10" />
 
-
         </LinearLayout>
-
     </FrameLayout>
 
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/exerciseStatusRecycler"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="5dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        android:orientation="horizontal"/>
 </androidx.constraintlayout.widget.ConstraintLayout>
