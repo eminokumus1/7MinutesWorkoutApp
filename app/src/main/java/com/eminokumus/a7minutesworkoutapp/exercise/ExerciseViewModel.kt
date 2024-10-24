@@ -81,4 +81,11 @@ class ExerciseViewModel : ViewModel() {
             _nextExerciseName.value = exerciseList[currentExercisePosition + 1].name
         }
     }
+
+    fun setCurrentExerciseSelected(isSelected: Boolean){
+        _currentExercise.value?.isSelected = isSelected
+    }
+    fun setCurrentExerciseCompleted(isCompleted: Boolean){
+        _currentExercise.value?.isCompleted = isCompleted
+    }
 }

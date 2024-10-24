@@ -113,6 +113,8 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
             override fun onFinish() {
                 viewModel.updateExercise()
+                viewModel.setCurrentExerciseSelected(true)
+                adapter.notifyDataSetChanged()
                 setExerciseViews()
                 cancelTimer(exerciseTimer)
                 cancelTimer(restTimer)
@@ -138,6 +140,9 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             }
 
             override fun onFinish() {
+                viewModel.setCurrentExerciseSelected(false)
+                viewModel.setCurrentExerciseCompleted(true)
+                adapter.notifyDataSetChanged()
                 if (viewModel.hasExerciseListNext()) {
                     setRestViews()
                     cancelTimer(exerciseTimer)
