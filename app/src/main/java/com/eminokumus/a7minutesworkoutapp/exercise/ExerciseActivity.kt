@@ -39,11 +39,12 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         viewModel = ExerciseViewModel()
 
         setSupportActionBar(binding.exerciseToolbar)
+        displayUpButtonInToolbar()
+        setToolbarNavigationOnClickListener()
 
         observeLiveData()
 
-        displayUpButtonInToolbar()
-        setToolbarNavigationOnClickListener()
+
 
         cancelTimer(restTimer)
         setRestProgressBarProgress(0)

@@ -12,4 +12,6 @@
     <string name="finish">FINISH</string>
     <string name="warningDescription">You will lose your workout progress.\nDo you want to go back?</string>
     <string name="warningTitleText">Are you sure?</string>
+    <string name="calculator">Calculator</string>
+    <string name="bmi">BMI</string>
 </resources>
