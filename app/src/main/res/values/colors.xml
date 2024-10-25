@@ -4,10 +4,15 @@
     <color name="white">#FFFFFFFF</color>
     <color name="lightGrey">#C4C4C4</color>
     <color name="darkGrey">#212121</color>
+    <color name="green">#4CAF50</color>
+    <color name="red">#C20505</color>
 
     <color name="colorPrimary">#B2212121</color>
     <color name="colorPrimaryDark">#B2212121</color>
     <color name="colorAccent">#008F24</color>
+    <color name="colorDarkAccent">#54a9f5</color>
+
+    <color name="backgroundDimGray">#866F6E6E</color>
 
     <color name="toolbar_color_control_normal">#000000</color>
 

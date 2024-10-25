@@ -7,11 +7,11 @@ import com.eminokumus.a7minutesworkoutapp.Constants
 import com.eminokumus.a7minutesworkoutapp.vo.Exercise
 
 class ExerciseViewModel : ViewModel() {
-    private val restTimeInMillis: Long = 10 * 1000
+    private val restTimeInMillis: Long = 1 * 1000
     private var restProgress = 0
 
 
-    private val exerciseTimeInMillis: Long = 30 * 1000
+    private val exerciseTimeInMillis: Long = 1 * 1000
     private var exerciseProgress = 0
 
     private val exerciseList = Constants.getExerciseList()

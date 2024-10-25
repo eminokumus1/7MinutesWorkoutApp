@@ -1,5 +1,7 @@
 package com.eminokumus.a7minutesworkoutapp.exercise
 
+import android.app.Dialog
+import android.content.Intent
 import android.media.MediaPlayer
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -10,9 +12,10 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.view.get
+import com.eminokumus.a7minutesworkoutapp.FinishActivity
 import com.eminokumus.a7minutesworkoutapp.R
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityExerciseBinding
+import com.eminokumus.a7minutesworkoutapp.databinding.BackConfirmationDialogBinding
 import java.util.Locale
 
 class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
@@ -48,10 +51,6 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         setupExerciseStatusRecyclerAdapter()
     }
 
-    private fun setupExerciseStatusRecyclerAdapter() {
-        adapter = ExerciseStatusAdapter(viewModel.getExerciseList())
-        binding.exerciseStatusRecycler.adapter = adapter
-    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -83,9 +82,39 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
 
+    private fun setupExerciseStatusRecyclerAdapter() {
+        adapter = ExerciseStatusAdapter(viewModel.getExerciseList())
+        binding.exerciseStatusRecycler.adapter = adapter
+    }
+
+    private fun displayCustomDialogForBackButton(){
+        val customDialog = Dialog(this)
+        val dialogBinding = BackConfirmationDialogBinding.inflate(layoutInflater)
+        customDialog.setContentView(dialogBinding.root)
+        customDialog.setCanceledOnTouchOutside(false)
+        dialogBinding.yesButton.setOnClickListener {
+            this@ExerciseActivity.finish()
+            displayDimBackground()
+            customDialog.dismiss()
+        }
+        dialogBinding.noButton.setOnClickListener {
+            hideDimBackground()
+            customDialog.dismiss()
+        }
+        customDialog.window?.setBackgroundDrawableResource(R.drawable.rounded_bg)
+        customDialog.show()
+    }
+
+    private fun displayDimBackground(){
+        binding.dimBackgroundView.visibility = View.VISIBLE
+    }
+    private fun hideDimBackground(){
+        binding.dimBackgroundView.visibility = View.GONE
+    }
+
     private fun setToolbarNavigationOnClickListener() {
         binding.exerciseToolbar.setNavigationOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
+            displayCustomDialogForBackButton()
         }
     }
 
@@ -151,6 +180,9 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
                 } else {
                     Toast.makeText(this@ExerciseActivity, "Workout completed", Toast.LENGTH_SHORT)
                         .show()
+                    val intent = Intent(this@ExerciseActivity, FinishActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
             }
 

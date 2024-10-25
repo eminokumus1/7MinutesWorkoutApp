@@ -1,5 +1,6 @@
 package com.eminokumus.a7minutesworkoutapp.exercise
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,6 +34,7 @@ class ExerciseStatusAdapter(val itemList: ArrayList<Exercise>) :
                         itemView.context,
                         R.drawable.item_circular_color_accent_bg
                     )
+                    binding.itemTextView.setTextColor(Color.parseColor("#FFFFFF"))
                 }
             }
         }

@@ -6,4 +6,10 @@
     <string name="exercise_image">Exercise image</string>
     <string name="exercise_name">Exercise name</string>
     <string name="upcoming_exercise">Upcoming Exercise:</string>
+    <string name="end">END</string>
+    <string name="check_sign_image">Check sign image</string>
+    <string name="congratulation_text">Congratulations!\nYou have done the workout.</string>
+    <string name="finish">FINISH</string>
+    <string name="warningDescription">You will lose your workout progress.\nDo you want to go back?</string>
+    <string name="warningTitleText">Are you sure?</string>
 </resources>
