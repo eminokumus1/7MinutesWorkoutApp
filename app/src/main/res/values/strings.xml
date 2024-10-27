@@ -14,8 +14,13 @@
     <string name="warningTitleText">Are you sure?</string>
     <string name="calculator">Calculator</string>
     <string name="bmi">BMI</string>
-    <string name="weight_hint">WEIGHT (in kg)</string>
-    <string name="height_hint">HEIGHT (in cm)</string>
+    <string name="weight_hint_metric">WEIGHT (in kg)</string>
+    <string name="weight_hint_us">WEIGHT (in lbs)</string>
+    <string name="height_hint_metric">HEIGHT (in cm)</string>
     <string name="calculate">CALCULATE</string>
     <string name="your_bmi">YOUR BMI</string>
+    <string name="metric_units">METRIC UNITS</string>
+    <string name="us_units">US UNITS</string>
+    <string name="feet">FEET</string>
+    <string name="inch">INCH</string>
 </resources>

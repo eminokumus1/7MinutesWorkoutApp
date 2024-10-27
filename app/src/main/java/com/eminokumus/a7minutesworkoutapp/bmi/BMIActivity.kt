@@ -6,43 +6,17 @@ import android.view.View
 import android.widget.Toast
 import com.eminokumus.a7minutesworkoutapp.R
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityBmiBinding
-import java.math.BigDecimal
-import java.math.RoundingMode
 
-enum class BMIType(val type: String, val description: String) {
-    VERY_SEVERELY_UNDERWEIGHT(
-        "Very severely underweight",
-        "Oops! You really need to take better care of yourself! Eat more!"
-    ),
-    VERY_UNDERWEIGHT(
-        "Very underweight",
-        "Oops!You really need to take better care of yourself! Eat more!"
-    ),
-    UNDERWEIGHT(
-        "Underweight",
-        "Oops!You really need to take better care of yourself! Eat more!"
-    ),
-    NORMAL(
-        "Normal",
-        "Congratulations! You are in a good shape!"
-    ),
-    OVERWEIGHT(
-        "Overweight",
-        "Oops! You really need to take care of your yourself! Workout maybe!"
-    ),
-    OBESE(
-        "OBESE",
-        "Oops! You really need to take care of your yourself! Workout maybe!"
-    )
 
+enum class UnitType() {
+    METRIC, US
 }
 
 class BMIActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBmiBinding
 
-    private var bmi = 0f
-    private var bmiValue = ""
-    private lateinit var bmiType : BMIType
+    private var currentUnitType = UnitType.METRIC
+    private var bmi : BMI? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -53,11 +27,24 @@ class BMIActivity : AppCompatActivity() {
         displayUpButtonInToolbar()
         setToolbarNavigationOnClickListener()
 
+        binding.unitsRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+            if (checkedId == R.id.metricUnitsRadioButton) {
+                currentUnitType = UnitType.METRIC
+                displayMetricUnitViews()
+            } else {
+                currentUnitType = UnitType.US
+                displayUSUnitViews()
+            }
+        }
+
+        setCalculateButtonOnClickListener()
+    }
+
+    private fun setCalculateButtonOnClickListener() {
         binding.calculateButton.setOnClickListener {
             if (validateInputs()) {
-                bmi = calculateBMI()
-                bmiValue = BigDecimal(bmi.toDouble()).setScale(2, RoundingMode.HALF_EVEN).toString()
-                bmiType = findBMIType()
+                setBMI()
+                bmi?.calculateBMI()
                 displayResultLinearLayout()
                 setResultTexts()
             } else {
@@ -67,38 +54,84 @@ class BMIActivity : AppCompatActivity() {
         }
     }
 
-    private fun displayResultLinearLayout(){
-        binding.resultLinearLayout.visibility = View.VISIBLE
+    private fun displayMetricUnitViews() {
+        binding.run {
+            weightInputLayout.hint = resources.getString(R.string.weight_hint_metric)
+            heightMetricInputLayout.visibility = View.VISIBLE
+        }
+        hideUSUnitLayouts()
+        clearUSUnitEditTexts()
+        hideResultLinearLayout()
     }
 
-    private fun setResultTexts() {
-        binding.bmiValueText.text = bmiValue
-        binding.bmiTypeText.text = bmiType.type
-        binding.bmiDescriptionText.text = bmiType.description
+    private fun displayUSUnitViews() {
+        binding.run {
+            weightInputLayout.hint = resources.getString(R.string.weight_hint_us)
+            heightMetricInputLayout.visibility = View.INVISIBLE
+            heightFeetInputLayout.visibility = View.VISIBLE
+            heightInchInputLayout.visibility = View.VISIBLE
+        }
+        clearMetricUnitEditTexts()
+        hideResultLinearLayout()
     }
 
-    private fun findBMIType(): BMIType {
-        return if (bmi < 15f) {
-            BMIType.VERY_SEVERELY_UNDERWEIGHT
-        } else if (bmi.compareTo(15f) > 0 && bmi.compareTo(16f) <= 0) {
-            BMIType.VERY_UNDERWEIGHT
-        } else if (bmi.compareTo(16f) > 0 && bmi.compareTo(18.5f) <= 0) {
-            BMIType.UNDERWEIGHT
-        } else if (bmi.compareTo(18.5f) > 0 && bmi.compareTo(25f) <= 0) {
-            BMIType.NORMAL
-        } else if (bmi.compareTo(25f) > 0 && bmi.compareTo(30f) <= 0) {
-            BMIType.OVERWEIGHT
-        } else {
-            BMIType.OBESE
+    private fun clearUSUnitEditTexts() {
+        binding.run {
+            weightInputText.text?.clear()
+            heightFeetInputText.text?.clear()
+            heightInchInputText.text?.clear()
         }
     }
 
-    private fun calculateBMI(): Float {
-        val weightInKg = binding.weightInputText.text.toString().toFloat()
-        val heightInMeter = binding.heightInputText.text.toString().toFloat() / 100
-        val bmi = weightInKg / (heightInMeter * heightInMeter)
+    private fun clearMetricUnitEditTexts() {
+        binding.run {
+            weightInputText.text?.clear()
+            heightMetricInputText.text?.clear()
+        }
+    }
 
-        return bmi
+    private fun hideUSUnitLayouts() {
+        binding.run {
+            heightFeetInputLayout.visibility = View.INVISIBLE
+            heightInchInputLayout.visibility = View.INVISIBLE
+        }
+    }
+
+    private fun displayResultLinearLayout() {
+        binding.resultLinearLayout.visibility = View.VISIBLE
+    }
+
+    private fun hideResultLinearLayout() {
+        binding.resultLinearLayout.visibility = View.INVISIBLE
+    }
+
+    private fun setResultTexts() {
+        binding.run {
+            bmi?.let {
+                bmiValueText.text = it.toString()
+                val bmiType = it.getBMIType()
+                bmiTypeText.text = bmiType.type
+                bmiDescriptionText.text = bmiType.description
+            }
+
+        }
+    }
+
+
+    private fun setBMI() {
+        bmi = if (currentUnitType == UnitType.METRIC) {
+            MetricBMI(
+                binding.weightInputText.text.toString().toFloat(),
+                binding.heightMetricInputText.text.toString().toFloat()
+            )
+
+        } else {
+            USBMI(
+                binding.weightInputText.text.toString().toFloat(),
+                binding.heightFeetInputText.text.toString().toFloat(),
+                binding.heightInchInputText.text.toString().toFloat()
+            )
+        }
     }
 
     private fun displayUpButtonInToolbar() {
@@ -114,14 +147,19 @@ class BMIActivity : AppCompatActivity() {
         }
     }
 
-    private fun validateInputs(): Boolean {
-        val isValid = if (binding.weightInputText.text.toString().isEmpty()) {
-            false
-        } else if (binding.heightInputText.text.toString().isEmpty()) {
-            false
-        } else {
-            true
-        }
-        return isValid
+    private fun validateInputs() = if (currentUnitType == UnitType.METRIC) {
+        validateInputsForMetricUnits()
+    } else {
+        validateInputsForUSUnits()
+
     }
+
+    private fun validateInputsForMetricUnits() =
+        !(binding.weightInputText.text.toString().isEmpty() ||
+                binding.heightMetricInputText.text.toString().isEmpty())
+
+    private fun validateInputsForUSUnits() =
+        !(binding.weightInputText.text.toString().isEmpty() ||
+                binding.heightFeetInputText.text.toString().isEmpty() ||
+                binding.heightInchInputText.text.toString().isEmpty())
 }
