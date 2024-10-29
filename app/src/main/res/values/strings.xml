@@ -23,4 +23,6 @@
     <string name="us_units">US UNITS</string>
     <string name="feet">FEET</string>
     <string name="inch">INCH</string>
+    <string name="history">History</string>
+    <string name="history_image_description">History image</string>
 </resources>

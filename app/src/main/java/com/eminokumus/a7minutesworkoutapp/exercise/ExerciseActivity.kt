@@ -12,7 +12,7 @@ import android.util.Log
 import android.view.View
 import android.widget.TextView
 import android.widget.Toast
-import com.eminokumus.a7minutesworkoutapp.FinishActivity
+import com.eminokumus.a7minutesworkoutapp.finish.FinishActivity
 import com.eminokumus.a7minutesworkoutapp.R
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityExerciseBinding
 import com.eminokumus.a7minutesworkoutapp.databinding.BackConfirmationDialogBinding

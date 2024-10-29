@@ -1,36 +1,32 @@
-package com.eminokumus.a7minutesworkoutapp
+package com.eminokumus.a7minutesworkoutapp.history
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.eminokumus.a7minutesworkoutapp.databinding.ActivityFinishBinding
-import com.eminokumus.a7minutesworkoutapp.start.StartActivity
+import com.eminokumus.a7minutesworkoutapp.R
+import com.eminokumus.a7minutesworkoutapp.databinding.ActivityHistoryBinding
 
-class FinishActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityFinishBinding
+class HistoryActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityHistoryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = ActivityFinishBinding.inflate(layoutInflater)
+        binding = ActivityHistoryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(binding.finishActivityToolbar)
+        setSupportActionBar(binding.historyToolbar)
         displayUpButtonInToolbar()
         setToolbarNavigationOnClickListener()
-
-        binding.finishButton.setOnClickListener {
-            finish()
-        }
     }
 
     private fun displayUpButtonInToolbar() {
         if (supportActionBar != null) {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
+            supportActionBar?.title = "HISTORY"
         }
     }
 
     private fun setToolbarNavigationOnClickListener() {
-        binding.finishActivityToolbar.setNavigationOnClickListener {
+        binding.historyToolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
     }

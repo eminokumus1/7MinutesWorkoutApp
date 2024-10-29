@@ -6,6 +6,7 @@ import android.os.Bundle
 import com.eminokumus.a7minutesworkoutapp.bmi.BMIActivity
 import com.eminokumus.a7minutesworkoutapp.exercise.ExerciseActivity
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityStartBinding
+import com.eminokumus.a7minutesworkoutapp.history.HistoryActivity
 
 class StartActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStartBinding
@@ -20,6 +21,7 @@ class StartActivity : AppCompatActivity() {
     private fun setOnClickListeners() {
         setStartFrameLayoutOnClickListener()
         setBMIFrameLayoutOnClickListener()
+        setHistoryFrameLayoutOnClickListener()
     }
 
     private fun setBMIFrameLayoutOnClickListener() {
@@ -32,6 +34,13 @@ class StartActivity : AppCompatActivity() {
     private fun setStartFrameLayoutOnClickListener() {
         binding.startFrameLayout.setOnClickListener {
             val intent = Intent(this, ExerciseActivity::class.java)
+            startActivity(intent)
+        }
+    }
+
+    private fun setHistoryFrameLayoutOnClickListener(){
+        binding.historyFrameLayout.setOnClickListener {
+            val intent = Intent(this, HistoryActivity::class.java)
             startActivity(intent)
         }
     }
