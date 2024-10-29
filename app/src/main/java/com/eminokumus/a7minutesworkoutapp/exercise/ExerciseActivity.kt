@@ -291,4 +291,6 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     }
 
 
+
+
 }

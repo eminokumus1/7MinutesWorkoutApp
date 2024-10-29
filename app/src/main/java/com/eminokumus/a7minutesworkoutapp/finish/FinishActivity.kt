@@ -1,10 +1,16 @@
 package com.eminokumus.a7minutesworkoutapp.finish
 
-import android.content.Intent
+import android.icu.util.Calendar
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.lifecycle.lifecycleScope
+import com.eminokumus.a7minutesworkoutapp.WorkoutApp
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityFinishBinding
-import com.eminokumus.a7minutesworkoutapp.start.StartActivity
+import com.eminokumus.a7minutesworkoutapp.history.WorkoutHistoryDao
+import com.eminokumus.a7minutesworkoutapp.vo.WorkoutHistoryEntity
+import kotlinx.coroutines.launch
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class FinishActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFinishBinding
@@ -13,6 +19,9 @@ class FinishActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityFinishBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        val workoutHistoryDao = (application as WorkoutApp).database.historyDao()
+        addWorkoutToDatabase(workoutHistoryDao)
 
         setSupportActionBar(binding.finishActivityToolbar)
         displayUpButtonInToolbar()
@@ -33,5 +42,18 @@ class FinishActivity : AppCompatActivity() {
         binding.finishActivityToolbar.setNavigationOnClickListener {
             onBackPressedDispatcher.onBackPressed()
         }
+    }
+
+    private fun addWorkoutToDatabase(workoutHistoryDao: WorkoutHistoryDao){
+        val calendar = Calendar.getInstance()
+        val dateTime = calendar.time
+
+        val simpleDataFormat = SimpleDateFormat("dd MM yyyy HH:mm:ss", Locale.getDefault())
+        val date = simpleDataFormat.format(dateTime)
+
+        lifecycleScope.launch {
+            workoutHistoryDao.insert(WorkoutHistoryEntity(date))
+        }
+
     }
 }
