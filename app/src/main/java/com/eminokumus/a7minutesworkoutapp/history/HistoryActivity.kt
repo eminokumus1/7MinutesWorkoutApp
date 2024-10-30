@@ -4,11 +4,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.lifecycleScope
-import com.eminokumus.a7minutesworkoutapp.R
 import com.eminokumus.a7minutesworkoutapp.WorkoutApp
 import com.eminokumus.a7minutesworkoutapp.databinding.ActivityHistoryBinding
 import com.eminokumus.a7minutesworkoutapp.vo.WorkoutHistoryEntity
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class HistoryActivity : AppCompatActivity() {
