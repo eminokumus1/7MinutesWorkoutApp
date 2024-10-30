@@ -16,16 +16,20 @@ class FinishActivity : AppCompatActivity() {
     private lateinit var binding: ActivityFinishBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val workoutHistoryDao = (application as WorkoutApp).database.historyDao()
+
+
         super.onCreate(savedInstanceState)
         binding = ActivityFinishBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val workoutHistoryDao = (application as WorkoutApp).database.historyDao()
-        addWorkoutToDatabase(workoutHistoryDao)
 
         setSupportActionBar(binding.finishActivityToolbar)
         displayUpButtonInToolbar()
         setToolbarNavigationOnClickListener()
+
+        addWorkoutToDatabase(workoutHistoryDao)
+
 
         binding.finishButton.setOnClickListener {
             finish()

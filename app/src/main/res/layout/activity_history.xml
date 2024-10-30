@@ -15,4 +15,38 @@
         app:layout_constraintTop_toTopOf="parent"
         app:titleTextColor="@color/colorPrimary" />
 
+    <TextView
+        android:id="@+id/exerciseCompletedText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/exercise_completed"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/grey"
+        app:layout_constraintTop_toBottomOf="@id/historyToolbar"/>
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/historyRecycler"
+        android:layout_width="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintTop_toBottomOf="@id/exerciseCompletedText"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:id="@+id/noDataText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="NO DATA AVAILABLE"
+        android:gravity="center"
+        android:textSize="16sp"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
